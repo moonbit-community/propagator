@@ -63,6 +63,7 @@ fn double_is_neginf(d : Double) -> Bool {
 }
 
 ///|
+/// Approximate equality (1e-6)
 pub impl Propagated for Float with merge(self, other) {
   if self != self && other != other {
     Change(false, self)
@@ -78,6 +79,7 @@ pub impl Propagated for Float with merge(self, other) {
 }
 
 ///|
+/// Approximate equality (1e-9)
 pub impl Propagated for Double with merge(self, other) {
   if self != self && other != other {
     Change(false, self)
