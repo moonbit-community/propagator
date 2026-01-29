@@ -11,15 +11,21 @@ fn Interval::new(lo~ : Double, hi~ : Double) -> Interval {
 }
 
 ///|
-fn Interval::not_intersect_to(self : Interval, other : Interval) -> Bool {
-  match (self, other) {
-    (Empty, _) => true
-    (_, Empty) => true
-    (Interval(_) as l, Interval(_) as r) => l.hi < r.lo || l.lo > r.hi
-  }
-}
-
-///|
 impl Propagated for Interval with merge(self, other) {
-  ...
+  match (self, other) {
+    (Interval(_) as l, Interval(_) as r) =>
+      if l.hi < r.lo || r.hi < l.lo {
+        Change::Change(true, Empty)
+      } else {
+        Change::Change(
+          l.lo < r.lo || l.hi > r.hi,
+          Interval::new(
+            lo=@cmp.maximum(l.lo, r.lo),
+            hi=@cmp.maximum(l.hi, r.lo),
+          ),
+        )
+      }
+    (Empty, _) => Change(false, Empty)
+    (_, Empty) => Change(true, Empty)
+  }
 }
