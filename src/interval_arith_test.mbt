@@ -11,7 +11,7 @@ fn Interval::new(lo~ : Double, hi~ : Double) -> Interval {
 }
 
 ///|
-fn not_intersect_to(self : Interval, other : Interval) -> Bool {
+fn Interval::not_intersect_to(self : Interval, other : Interval) -> Bool {
   match (self, other) {
     (Empty, _) => true
     (_, Empty) => true

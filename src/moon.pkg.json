@@ -1,0 +1,7 @@
+{
+    "import": [
+        { "path": "moonbitlang/core/immut/sorted_set", "alias": "immutset" },
+        "moonbitlang/core/double",
+        "moonbitlang/core/float"
+    ]
+}

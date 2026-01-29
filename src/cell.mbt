@@ -6,7 +6,7 @@ struct Cell[T] {
 }
 
 ///|
-pub fn[T] op_equal(self : Cell[T], other : Cell[T]) -> Bool {
+pub fn[T] Cell::op_equal(self : Cell[T], other : Cell[T]) -> Bool {
   physical_equal(self.mutvar, other.mutvar)
 }
 
@@ -22,14 +22,14 @@ pub fn[T] Cell::new(merge~ : (T, T) -> Change[T]) -> Cell[T] {
 
 ///|
 pub fn[T : Propagated] Cell::new_with(
-  merge~ : (T, T) -> Change[T] = Propagated::merge,
-  known? : T
+  merge? : (T, T) -> Change[T] = Propagated::merge,
+  known? : T,
 ) -> Cell[T] {
   Cell::{ merge, watchers: [], mutvar: Ref::{ val: known } }
 }
 
 ///|
-pub fn[T] write(self : Cell[T], val : T) -> Unit raise MergeError {
+pub fn[T] Cell::write(self : Cell[T], val : T) -> Unit raise MergeError {
   match self.mutvar.val {
     None => {
       self.mutvar.val = Some(val)
@@ -59,14 +59,14 @@ pub fn[T] write(self : Cell[T], val : T) -> Unit raise MergeError {
 }
 
 ///|
-pub fn[T] content(self : Cell[T]) -> T? {
+pub fn[T] Cell::content(self : Cell[T]) -> T? {
   self.mutvar.val
 }
 
 ///|
-pub fn[T] attach(
+pub fn[T] Cell::attach(
   self : Cell[T],
-  watcher~ : (T) -> Unit raise MergeError
+  watcher~ : (T) -> Unit raise MergeError,
 ) -> Unit raise MergeError {
   match self.mutvar.val {
     None => self.watchers.push(watcher)
@@ -84,9 +84,9 @@ pub fn[T] Cell::unify(x : Cell[T], y : Cell[T]) -> Unit raise MergeError {
 }
 
 ///|
-pub fn[T] apply_to(
+pub fn[T] Cell::apply_to(
   self : Cell[T],
-  f : (T) -> Unit raise MergeError
+  f : (T) -> Unit raise MergeError,
 ) -> Unit raise MergeError {
   match self.mutvar.val {
     None => ()
@@ -98,7 +98,7 @@ pub fn[T] apply_to(
 pub fn[X, Y] Cell::attach2(
   watcher~ : (X, Y) -> Unit raise MergeError,
   x : Cell[X],
-  y : Cell[Y]
+  y : Cell[Y],
 ) -> Unit raise MergeError {
   x.attach(watcher=fn(x) { y.apply_to(fn(y) { watcher(x, y) }) })
   y.attach(watcher=fn(y) { x.apply_to(fn(x) { watcher(x, y) }) })
@@ -108,7 +108,7 @@ pub fn[X, Y] Cell::attach2(
 pub fn[I, O] Cell::lift(
   f : (I) -> O,
   input : Cell[I],
-  output~ : Cell[O]
+  output~ : Cell[O],
 ) -> Unit raise MergeError {
   input.attach(watcher=fn(val) { output.write(f(val)) })
 }
@@ -118,7 +118,7 @@ pub fn[X, Y, O] Cell::lift2(
   f : (X, Y) -> O,
   lhs_input : Cell[X],
   rhs_input : Cell[Y],
-  output~ : Cell[O]
+  output~ : Cell[O],
 ) -> Unit raise MergeError {
   Cell::attach2(lhs_input, rhs_input, watcher=fn(x, y) { output.write(f(x, y)) })
 }

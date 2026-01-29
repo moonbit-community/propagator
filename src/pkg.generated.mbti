@@ -1,0 +1,52 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/propagator"
+
+import {
+  "moonbitlang/core/bigint",
+  "moonbitlang/core/immut/sorted_set",
+}
+
+// Values
+
+// Errors
+type MergeError
+
+// Types and methods
+type Cell[T]
+pub fn[T] Cell::apply_to(Self[T], (T) -> Unit raise MergeError) -> Unit raise MergeError
+pub fn[T] Cell::attach(Self[T], watcher~ : (T) -> Unit raise MergeError) -> Unit raise MergeError
+pub fn[X, Y] Cell::attach2(watcher~ : (X, Y) -> Unit raise MergeError, Self[X], Self[Y]) -> Unit raise MergeError
+pub fn[T] Cell::content(Self[T]) -> T?
+pub fn[I, O] Cell::lift((I) -> O, Self[I], output~ : Self[O]) -> Unit raise MergeError
+pub fn[X, Y, O] Cell::lift2((X, Y) -> O, Self[X], Self[Y], output~ : Self[O]) -> Unit raise MergeError
+pub fn[T] Cell::new(merge~ : (T, T) -> Change[T]) -> Self[T]
+pub fn[T : Propagated] Cell::new_default() -> Self[T]
+pub fn[T : Propagated] Cell::new_with(merge? : (T, T) -> Change[T], known? : T) -> Self[T]
+pub fn[T] Cell::op_equal(Self[T], Self[T]) -> Bool
+pub fn[T] Cell::unify(Self[T], Self[T]) -> Unit raise MergeError
+pub fn[T] Cell::write(Self[T], T) -> Unit raise MergeError
+
+type Change[T]
+
+pub(all) struct Supported[T] {
+  support : @sorted_set.SortedSet[String]
+  value : T
+}
+pub impl[T : Propagated] Propagated for Supported[T]
+
+// Type aliases
+
+// Traits
+pub(open) trait Propagated {
+  merge(Self, Self) -> Change[Self]
+}
+pub impl Propagated for Bool
+pub impl Propagated for Int
+pub impl Propagated for Int64
+pub impl Propagated for UInt
+pub impl Propagated for UInt64
+pub impl Propagated for Float
+pub impl Propagated for Double
+pub impl Propagated for @bigint.BigInt
+pub impl[X : Propagated, Y : Propagated] Propagated for (X, Y)
+

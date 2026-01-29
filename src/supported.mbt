@@ -1,6 +1,6 @@
 ///|
 pub(all) struct Supported[T] {
-  support : @immut/sorted_set.T[String]
+  support : @immutset.SortedSet[String]
   value : T
 }
 

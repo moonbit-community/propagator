@@ -8,10 +8,7 @@ fn[T : Eq + Show] merge_default(l : T, r : T) -> Change[T] {
   if l == r {
     Change(false, l)
   } else {
-    Contradiction(
-      support=@immut/sorted_set.new(),
-      err_msg="merge: \{l} != \{r}",
-    )
+    Contradiction(support=@immutset.new(), err_msg="merge: \{l} != \{r}")
   }
 }
 
@@ -76,10 +73,7 @@ pub impl Propagated for Float with merge(self, other) {
   } else if (self - other).abs() < 0.000_001 {
     Change(false, self)
   } else {
-    Contradiction(
-      support=@immut/sorted_set.new(),
-      err_msg="merge: \{self} != \{other}",
-    )
+    Contradiction(support=@immutset.new(), err_msg="merge: \{self} != \{other}")
   }
 }
 
@@ -94,17 +88,14 @@ pub impl Propagated for Double with merge(self, other) {
   } else if (self - other).abs() < 0.000_000_001 {
     Change(false, self)
   } else {
-    Contradiction(
-      support=@immut/sorted_set.new(),
-      err_msg="merge: \{self} != \{other}",
-    )
+    Contradiction(support=@immutset.new(), err_msg="merge: \{self} != \{other}")
   }
 }
 
 ///|
 pub impl[X : Propagated, Y : Propagated] Propagated for (X, Y) with merge(
   self,
-  other
+  other,
 ) {
   match X::merge(self.0, other.0) {
     Change(x_changed, x) =>
