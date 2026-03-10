@@ -28,9 +28,9 @@ jobs:
       - name: moon update
         run: moon update
 
-      - name: moon build
+      - name: moon check
         run: |
-          moon build --target all
+          moon check --target all
       
       - name: moon test
         run: |
