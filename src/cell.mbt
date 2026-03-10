@@ -79,8 +79,8 @@ pub fn[T] Cell::attach(
 
 ///|
 pub fn[T] Cell::unify(x : Cell[T], y : Cell[T]) -> Unit raise MergeError {
-  x.attach(watcher=fn(val) { y.write(val) })
-  y.attach(watcher=fn(val) { x.write(val) })
+  x.attach(watcher=val => y.write(val))
+  y.attach(watcher=val => x.write(val))
 }
 
 ///|
@@ -100,8 +100,8 @@ pub fn[X, Y] Cell::attach2(
   x : Cell[X],
   y : Cell[Y],
 ) -> Unit raise MergeError {
-  x.attach(watcher=fn(x) { y.apply_to(fn(y) { watcher(x, y) }) })
-  y.attach(watcher=fn(y) { x.apply_to(fn(x) { watcher(x, y) }) })
+  x.attach(watcher=x => y.apply_to(y => watcher(x, y)))
+  y.attach(watcher=y => x.apply_to(x => watcher(x, y)))
 }
 
 ///|
@@ -110,7 +110,7 @@ pub fn[I, O] Cell::lift(
   input : Cell[I],
   output~ : Cell[O],
 ) -> Unit raise MergeError {
-  input.attach(watcher=fn(val) { output.write(f(val)) })
+  input.attach(watcher=val => output.write(f(val)))
 }
 
 ///|
@@ -120,5 +120,5 @@ pub fn[X, Y, O] Cell::lift2(
   rhs_input : Cell[Y],
   output~ : Cell[O],
 ) -> Unit raise MergeError {
-  Cell::attach2(lhs_input, rhs_input, watcher=fn(x, y) { output.write(f(x, y)) })
+  Cell::attach2(lhs_input, rhs_input, watcher=(x, y) => output.write(f(x, y)))
 }

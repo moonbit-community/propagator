@@ -26,7 +26,10 @@ pub fn[T] Cell::op_equal(Self[T], Self[T]) -> Bool
 pub fn[T] Cell::unify(Self[T], Self[T]) -> Unit raise MergeError
 pub fn[T] Cell::write(Self[T], T) -> Unit raise MergeError
 
-type Change[T]
+pub(all) enum Change[T] {
+  Change(Bool, T)
+  Contradiction(support~ : @sorted_set.SortedSet[String], err_msg~ : String)
+}
 
 pub(all) struct Supported[T] {
   support : @sorted_set.SortedSet[String]

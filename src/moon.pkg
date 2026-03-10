@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/core/immut/sorted_set" @immutset,
+  "moonbitlang/core/double",
+  "moonbitlang/core/float",
+}
+
+import {
+  "moonbitlang/core/cmp",
+} for "test"
