@@ -11,7 +11,7 @@ pub fn[T] Cell::op_equal(self : Cell[T], other : Cell[T]) -> Bool {
 }
 
 ///|
-pub fn[T : Propagated] Cell::new_default() -> Cell[T] {
+pub impl[T : Propagated] Default for Cell[T] with default() {
   Cell::{ merge: Propagated::merge, watchers: [], mutvar: Ref::{ val: None } }
 }
 
