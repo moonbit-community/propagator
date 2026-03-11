@@ -20,11 +20,11 @@ pub fn[T] Cell::content(Self[T]) -> T?
 pub fn[I, O] Cell::lift((I) -> O, Self[I], output~ : Self[O]) -> Unit raise MergeError
 pub fn[X, Y, O] Cell::lift2((X, Y) -> O, Self[X], Self[Y], output~ : Self[O]) -> Unit raise MergeError
 pub fn[T] Cell::new(merge~ : (T, T) -> Change[T]) -> Self[T]
-pub fn[T : Propagated] Cell::new_default() -> Self[T]
 pub fn[T : Propagated] Cell::new_with(merge? : (T, T) -> Change[T], known? : T) -> Self[T]
 pub fn[T] Cell::op_equal(Self[T], Self[T]) -> Bool
 pub fn[T] Cell::unify(Self[T], Self[T]) -> Unit raise MergeError
 pub fn[T] Cell::write(Self[T], T) -> Unit raise MergeError
+pub impl[T : Propagated] Default for Cell[T]
 
 pub(all) enum Change[T] {
   Change(Bool, T)

@@ -10,9 +10,9 @@ fn test_bidirct_add(x : Int, y : Int) -> Unit raise Error {
   let z = x + y
   // forward
   {
-    let lhs_input = Cell::new_default()
-    let rhs_input = Cell::new_default()
-    let output = Cell::new_default()
+    let lhs_input = Cell::default()
+    let rhs_input = Cell::default()
+    let output = Cell::default()
     adder(lhs_input, rhs_input, output)
     lhs_input.write(x)
     rhs_input.write(y)
@@ -20,18 +20,18 @@ fn test_bidirct_add(x : Int, y : Int) -> Unit raise Error {
   }
   // backward, get x
   {
-    let lhs_input = Cell::new_default()
-    let rhs_input = Cell::new_default()
-    let output = Cell::new_default()
+    let lhs_input = Cell::default()
+    let rhs_input = Cell::default()
+    let output = Cell::default()
     adder(lhs_input, rhs_input, output)
     output.write(z)
     rhs_input.write(y)
     assert_eq(lhs_input.content().unwrap(), x)
   }
   // backward, get y
-  let lhs_input = Cell::new_default()
-  let rhs_input = Cell::new_default()
-  let output = Cell::new_default()
+  let lhs_input = Cell::default()
+  let rhs_input = Cell::default()
+  let output = Cell::default()
   adder(lhs_input, rhs_input, output)
   output.write(z)
   rhs_input.write(x)
