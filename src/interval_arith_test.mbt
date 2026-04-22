@@ -5,9 +5,8 @@ enum Interval {
 }
 
 ///|
-#callsite(autofill(loc))
-fn Interval::new(lo~ : Double, hi~ : Double, loc~ : SourceLoc) -> Interval {
-  guard lo < hi else { abort("lower limit = \{lo}, upper limit =\{hi}", loc~) }
+fn Interval::new(lo~ : Double, hi~ : Double) -> Interval {
+  guard lo < hi else { abort("lower limit = \{lo}, upper limit =\{hi}") }
   Interval(lo~, hi~)
 }
 
@@ -173,37 +172,27 @@ fn sqrter(x : Cell[Interval], y : Cell[Interval]) -> Unit raise MergeError {
 }
 
 ///|
-#callsite(autofill(loc))
-fn assert_double_eq(
-  actual : Double,
-  expected : Double,
-  loc~ : SourceLoc,
-) -> Unit {
+fn assert_double_eq(actual : Double, expected : Double) -> Unit {
   let same = if actual.is_inf() || expected.is_inf() {
     actual == expected
   } else {
     actual.is_close(expected, absolute_tolerance=0.000_000_001)
   }
-  guard same else { abort("expected \{expected}, got \{actual}", loc~) }
+  guard same else { abort("expected \{expected}, got \{actual}") }
 }
 
 ///|
-#callsite(autofill(loc))
-fn assert_interval_eq(
-  actual : Interval,
-  expected : Interval,
-  loc~ : SourceLoc,
-) -> Unit {
+fn assert_interval_eq(actual : Interval, expected : Interval) -> Unit {
   match (actual, expected) {
     (Empty, Empty) => ()
     (
       Interval(lo=actual_lo, hi=actual_hi),
       Interval(lo=expected_lo, hi=expected_hi),
     ) => {
-      assert_double_eq(actual_lo, expected_lo, loc~)
-      assert_double_eq(actual_hi, expected_hi, loc~)
+      assert_double_eq(actual_lo, expected_lo)
+      assert_double_eq(actual_hi, expected_hi)
     }
-    _ => abort("interval mismatch", loc~)
+    _ => abort("interval mismatch")
   }
 }
 
