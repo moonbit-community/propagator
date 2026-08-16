@@ -5,7 +5,7 @@ pub(all) struct Supported[T] {
 }
 
 ///|
-pub impl[T : Propagated] Propagated for Supported[T] with merge(self, other) {
+pub impl[T : Propagated] Propagated for Supported[T] with fn merge(self, other) {
   match Propagated::merge(self.value, other.value) {
     Change(false, _) => Change(false, self)
     Change(true, value) =>

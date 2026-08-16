@@ -29,7 +29,7 @@ fn interval_all() -> Interval {
 }
 
 ///|
-impl Propagated for Interval with merge(self, other) {
+impl Propagated for Interval with fn merge(self, other) {
   match (self, other) {
     (Interval(_) as l, Interval(_) as r) =>
       if l.hi <= r.lo || r.hi <= l.lo {
@@ -46,7 +46,7 @@ impl Propagated for Interval with merge(self, other) {
 }
 
 ///|
-impl Mul for Interval with mul(lhs, rhs) {
+impl Mul for Interval with fn mul(lhs, rhs) {
   if lhs is Interval(lo=lhs_lo, hi=lhs_hi) &&
     rhs is Interval(lo=rhs_lo, hi=rhs_hi) {
     interval_from_candidates(
@@ -61,7 +61,7 @@ impl Mul for Interval with mul(lhs, rhs) {
 }
 
 ///|
-impl Add for Interval with add(lhs, rhs) {
+impl Add for Interval with fn add(lhs, rhs) {
   if lhs is Interval(lo=lhs_lo, hi=lhs_hi) &&
     rhs is Interval(lo=rhs_lo, hi=rhs_hi) {
     Interval::new(lo=lhs_lo + rhs_lo, hi=lhs_hi + rhs_hi)
@@ -71,7 +71,7 @@ impl Add for Interval with add(lhs, rhs) {
 }
 
 ///|
-impl Sub for Interval with sub(minuend, subtrahend) {
+impl Sub for Interval with fn sub(minuend, subtrahend) {
   if minuend is Interval(lo=minuend_lo, hi=minuend_hi) &&
     subtrahend is Interval(lo=subtrahend_lo, hi=subtrahend_hi) {
     Interval::new(lo=minuend_lo - subtrahend_hi, hi=minuend_hi - subtrahend_lo)
@@ -81,7 +81,7 @@ impl Sub for Interval with sub(minuend, subtrahend) {
 }
 
 ///|
-impl Div for Interval with div(dividend, divisor) {
+impl Div for Interval with fn div(dividend, divisor) {
   if dividend is Interval(lo=dividend_lo, hi=dividend_hi) &&
     divisor is Interval(lo=divisor_lo, hi=divisor_hi) {
     if divisor_lo < 0.0 && divisor_hi > 0.0 {
