@@ -11,7 +11,7 @@ pub fn[T] Cell::op_equal(self : Cell[T], other : Cell[T]) -> Bool {
 }
 
 ///|
-pub impl[T : Propagated] Default for Cell[T] with default() {
+pub impl[T : Propagated] Default for Cell[T] with fn default() {
   Cell::{ merge: Propagated::merge, watchers: [], mutvar: Ref::{ val: None } }
 }
 
@@ -51,7 +51,9 @@ pub fn[T] Cell::write(self : Cell[T], val : T) -> Unit raise MergeError {
             raise MergeError(contradiction.err_msg)
           } else {
             raise MergeError(
-              "\{contradiction.err_msg}, supported by \{contradiction.support.iter().collect()}",
+              contradiction.err_msg +
+              ", supported by " +
+              Repr(contradiction.support.iter().collect()).to_string(),
             )
           }
       }
