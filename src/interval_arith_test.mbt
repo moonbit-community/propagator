@@ -29,13 +29,13 @@ fn interval_all() -> Interval {
 }
 
 ///|
-impl Propagated for Interval with merge(self, other) {
+impl Propagated for Interval with fn merge(self, other) {
   match (self, other) {
     (Interval(_) as l, Interval(_) as r) =>
       if l.hi <= r.lo || r.hi <= l.lo {
-        Change::Change(true, Empty)
+        @propagator.Change::Change(true, Empty)
       } else {
-        Change::Change(
+        @propagator.Change::Change(
           l.lo < r.lo || l.hi > r.hi,
           Interval::new(lo=Double::max(l.lo, r.lo), hi=Double::min(l.hi, r.hi)),
         )
@@ -46,7 +46,7 @@ impl Propagated for Interval with merge(self, other) {
 }
 
 ///|
-impl Mul for Interval with mul(lhs, rhs) {
+impl Mul for Interval with fn mul(lhs, rhs) {
   if lhs is Interval(lo=lhs_lo, hi=lhs_hi) &&
     rhs is Interval(lo=rhs_lo, hi=rhs_hi) {
     interval_from_candidates(
@@ -61,7 +61,7 @@ impl Mul for Interval with mul(lhs, rhs) {
 }
 
 ///|
-impl Add for Interval with add(lhs, rhs) {
+impl Add for Interval with fn add(lhs, rhs) {
   if lhs is Interval(lo=lhs_lo, hi=lhs_hi) &&
     rhs is Interval(lo=rhs_lo, hi=rhs_hi) {
     Interval::new(lo=lhs_lo + rhs_lo, hi=lhs_hi + rhs_hi)
@@ -71,7 +71,7 @@ impl Add for Interval with add(lhs, rhs) {
 }
 
 ///|
-impl Sub for Interval with sub(minuend, subtrahend) {
+impl Sub for Interval with fn sub(minuend, subtrahend) {
   if minuend is Interval(lo=minuend_lo, hi=minuend_hi) &&
     subtrahend is Interval(lo=subtrahend_lo, hi=subtrahend_hi) {
     Interval::new(lo=minuend_lo - subtrahend_hi, hi=minuend_hi - subtrahend_lo)
@@ -81,7 +81,7 @@ impl Sub for Interval with sub(minuend, subtrahend) {
 }
 
 ///|
-impl Div for Interval with div(dividend, divisor) {
+impl Div for Interval with fn div(dividend, divisor) {
   if dividend is Interval(lo=dividend_lo, hi=dividend_hi) &&
     divisor is Interval(lo=divisor_lo, hi=divisor_hi) {
     if divisor_lo < 0.0 && divisor_hi > 0.0 {
@@ -160,15 +160,21 @@ fn Interval::square_preimage(self : Interval) -> Interval {
 }
 
 ///|
-fn squarer(x : Cell[Interval], y : Cell[Interval]) -> Unit raise MergeError {
-  Cell::lift(fn(x : Interval) { x.square() }, x, output=y)
-  Cell::lift(fn(y : Interval) { y.square_preimage() }, y, output=x)
+fn squarer(
+  x : @propagator.Cell[Interval],
+  y : @propagator.Cell[Interval],
+) -> Unit raise @propagator.MergeError {
+  @propagator.Cell::lift(fn(x : Interval) { x.square() }, x, output=y)
+  @propagator.Cell::lift(fn(y : Interval) { y.square_preimage() }, y, output=x)
 }
 
 ///|
-fn sqrter(x : Cell[Interval], y : Cell[Interval]) -> Unit raise MergeError {
-  Cell::lift(fn(x : Interval) { x.sqrt() }, x, output=y)
-  Cell::lift(fn(y : Interval) { y.square() }, y, output=x)
+fn sqrter(
+  x : @propagator.Cell[Interval],
+  y : @propagator.Cell[Interval],
+) -> Unit raise @propagator.MergeError {
+  @propagator.Cell::lift(fn(x : Interval) { x.sqrt() }, x, output=y)
+  @propagator.Cell::lift(fn(y : Interval) { y.square() }, y, output=x)
 }
 
 ///|
@@ -215,7 +221,7 @@ test "interval add/sub/mul/div" {
 ///|
 test "interval merge narrows by intersection" {
   match
-    Propagated::merge(
+    @propagator.Propagated::merge(
       Interval::new(lo=1.0, hi=5.0),
       Interval::new(lo=2.0, hi=3.0),
     ) {
@@ -226,7 +232,7 @@ test "interval merge narrows by intersection" {
     Contradiction(_) => abort("unexpected contradiction")
   }
   match
-    Propagated::merge(
+    @propagator.Propagated::merge(
       Interval::new(lo=1.0, hi=2.0),
       Interval::new(lo=2.0, hi=3.0),
     ) {
@@ -276,22 +282,22 @@ test "interval sqrt and square" {
 ///|
 test "squarer propagates both ways" {
   {
-    let input = Cell::default()
-    let output = Cell::default()
+    let input = @propagator.Cell::default()
+    let output = @propagator.Cell::default()
     squarer(input, output)
     input.write(Interval::new(lo=2.0, hi=3.0))
     assert_interval_eq(output.content().unwrap(), Interval::new(lo=4.0, hi=9.0))
   }
   {
-    let input = Cell::default()
-    let output = Cell::default()
+    let input = @propagator.Cell::default()
+    let output = @propagator.Cell::default()
     squarer(input, output)
     input.write(Interval::new(lo=2.0, hi=10.0))
     output.write(Interval::new(lo=4.0, hi=9.0))
     assert_interval_eq(input.content().unwrap(), Interval::new(lo=2.0, hi=3.0))
   }
-  let input = Cell::default()
-  let output = Cell::default()
+  let input = @propagator.Cell::default()
+  let output = @propagator.Cell::default()
   squarer(input, output)
   input.write(Interval::new(lo=-10.0, hi=-2.0))
   output.write(Interval::new(lo=4.0, hi=9.0))
@@ -301,22 +307,22 @@ test "squarer propagates both ways" {
 ///|
 test "sqrter propagates both ways" {
   {
-    let input = Cell::default()
-    let output = Cell::default()
+    let input = @propagator.Cell::default()
+    let output = @propagator.Cell::default()
     sqrter(input, output)
     input.write(Interval::new(lo=4.0, hi=9.0))
     assert_interval_eq(output.content().unwrap(), Interval::new(lo=2.0, hi=3.0))
   }
   {
-    let input = Cell::default()
-    let output = Cell::default()
+    let input = @propagator.Cell::default()
+    let output = @propagator.Cell::default()
     sqrter(input, output)
     input.write(Interval::new(lo=0.0, hi=100.0))
     output.write(Interval::new(lo=2.0, hi=3.0))
     assert_interval_eq(input.content().unwrap(), Interval::new(lo=4.0, hi=9.0))
   }
-  let input = Cell::default()
-  let output = Cell::default()
+  let input = @propagator.Cell::default()
+  let output = @propagator.Cell::default()
   sqrter(input, output)
   output.write(Interval::new(lo=-3.0, hi=-2.0))
   assert_interval_eq(input.content().unwrap(), Empty)
