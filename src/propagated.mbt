@@ -1,6 +1,6 @@
 ///|
 pub(open) trait Propagated {
-  merge(Self, Self) -> Change[Self]
+  fn merge(Self, Self) -> Change[Self]
 }
 
 ///|
@@ -13,32 +13,32 @@ fn[T : Eq + Show] merge_default(l : T, r : T) -> Change[T] {
 }
 
 ///|
-pub impl Propagated for Bool with merge(self, other) {
+pub impl Propagated for Bool with fn merge(self, other) {
   merge_default(self, other)
 }
 
 ///|
-pub impl Propagated for Int with merge(self, other) {
+pub impl Propagated for Int32 with fn merge(self, other) {
   merge_default(self, other)
 }
 
 ///|
-pub impl Propagated for Int64 with merge(self, other) {
+pub impl Propagated for Int64 with fn merge(self, other) {
   merge_default(self, other)
 }
 
 ///|
-pub impl Propagated for UInt with merge(self, other) {
+pub impl Propagated for UInt32 with fn merge(self, other) {
   merge_default(self, other)
 }
 
 ///|
-pub impl Propagated for UInt64 with merge(self, other) {
+pub impl Propagated for UInt64 with fn merge(self, other) {
   merge_default(self, other)
 }
 
 ///|
-pub impl Propagated for BigInt with merge(self, other) {
+pub impl Propagated for BigInt with fn merge(self, other) {
   merge_default(self, other)
 }
 
@@ -64,7 +64,7 @@ fn double_is_neginf(d : Double) -> Bool {
 
 ///|
 /// Approximate equality (1e-6)
-pub impl Propagated for Float with merge(self, other) {
+pub impl Propagated for Float with fn merge(self, other) {
   if self != self && other != other {
     Change(false, self)
   } else if float_is_neginf(self) && float_is_neginf(other) {
@@ -80,7 +80,7 @@ pub impl Propagated for Float with merge(self, other) {
 
 ///|
 /// Approximate equality (1e-9)
-pub impl Propagated for Double with merge(self, other) {
+pub impl Propagated for Double with fn merge(self, other) {
   if self != self && other != other {
     Change(false, self)
   } else if double_is_neginf(self) && double_is_neginf(other) {
@@ -95,7 +95,7 @@ pub impl Propagated for Double with merge(self, other) {
 }
 
 ///|
-pub impl[X : Propagated, Y : Propagated] Propagated for (X, Y) with merge(
+pub impl[X : Propagated, Y : Propagated] Propagated for (X, Y) with fn merge(
   self,
   other,
 ) {

@@ -11,21 +11,21 @@ pub fn[T] Cell::op_equal(self : Cell[T], other : Cell[T]) -> Bool {
 }
 
 ///|
-pub impl[T : Propagated] Default for Cell[T] with default() {
-  Cell::{ merge: Propagated::merge, watchers: [], mutvar: Ref::{ val: None } }
+pub impl[T : Propagated] Default for Cell[T] with fn default() {
+  Cell::{ merge: Propagated::merge, watchers: [], mutvar: Ref::{ val: None, }, }
 }
 
 ///|
 pub fn[T] Cell::new(merge~ : (T, T) -> Change[T]) -> Cell[T] {
-  Cell::{ merge, watchers: [], mutvar: Ref::{ val: None } }
+  Cell::{ merge, watchers: [], mutvar: Ref::{ val: None, }, }
 }
 
 ///|
 pub fn[T : Propagated] Cell::new_with(
-  merge? : (T, T) -> Change[T] = Propagated::merge,
+  merge~ : (T, T) -> Change[T] = Propagated::merge,
   known? : T,
 ) -> Cell[T] {
-  Cell::{ merge, watchers: [], mutvar: Ref::{ val: known } }
+  Cell::{ merge, watchers: [], mutvar: Ref::{ val: known, }, }
 }
 
 ///|
