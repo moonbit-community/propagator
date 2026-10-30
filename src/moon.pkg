@@ -5,5 +5,4 @@ import {
 }
 
 import {
-  "moonbitlang/core/cmp",
 } for "test"

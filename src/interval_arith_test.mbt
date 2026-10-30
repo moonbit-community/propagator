@@ -33,9 +33,9 @@ impl Propagated for Interval with fn merge(self, other) {
   match (self, other) {
     (Interval(_) as l, Interval(_) as r) =>
       if l.hi <= r.lo || r.hi <= l.lo {
-        Change::Change(true, Empty)
+        @propagator.Change::Change(true, Empty)
       } else {
-        Change::Change(
+        @propagator.Change::Change(
           l.lo < r.lo || l.hi > r.hi,
           Interval::new(lo=Double::max(l.lo, r.lo), hi=Double::min(l.hi, r.hi)),
         )
@@ -160,15 +160,21 @@ fn Interval::square_preimage(self : Interval) -> Interval {
 }
 
 ///|
-fn squarer(x : Cell[Interval], y : Cell[Interval]) -> Unit raise MergeError {
-  Cell::lift(fn(x : Interval) { x.square() }, x, output=y)
-  Cell::lift(fn(y : Interval) { y.square_preimage() }, y, output=x)
+fn squarer(
+  x : @propagator.Cell[Interval],
+  y : @propagator.Cell[Interval],
+) -> Unit raise @propagator.MergeError {
+  @propagator.Cell::lift(fn(x : Interval) { x.square() }, x, output=y)
+  @propagator.Cell::lift(fn(y : Interval) { y.square_preimage() }, y, output=x)
 }
 
 ///|
-fn sqrter(x : Cell[Interval], y : Cell[Interval]) -> Unit raise MergeError {
-  Cell::lift(fn(x : Interval) { x.sqrt() }, x, output=y)
-  Cell::lift(fn(y : Interval) { y.square() }, y, output=x)
+fn sqrter(
+  x : @propagator.Cell[Interval],
+  y : @propagator.Cell[Interval],
+) -> Unit raise @propagator.MergeError {
+  @propagator.Cell::lift(fn(x : Interval) { x.sqrt() }, x, output=y)
+  @propagator.Cell::lift(fn(y : Interval) { y.square() }, y, output=x)
 }
 
 ///|
@@ -215,7 +221,7 @@ test "interval add/sub/mul/div" {
 ///|
 test "interval merge narrows by intersection" {
   match
-    Propagated::merge(
+    @propagator.Propagated::merge(
       Interval::new(lo=1.0, hi=5.0),
       Interval::new(lo=2.0, hi=3.0),
     ) {
@@ -226,7 +232,7 @@ test "interval merge narrows by intersection" {
     Contradiction(_) => abort("unexpected contradiction")
   }
   match
-    Propagated::merge(
+    @propagator.Propagated::merge(
       Interval::new(lo=1.0, hi=2.0),
       Interval::new(lo=2.0, hi=3.0),
     ) {
@@ -276,22 +282,22 @@ test "interval sqrt and square" {
 ///|
 test "squarer propagates both ways" {
   {
-    let input = Cell::default()
-    let output = Cell::default()
+    let input = @propagator.Cell::default()
+    let output = @propagator.Cell::default()
     squarer(input, output)
     input.write(Interval::new(lo=2.0, hi=3.0))
     assert_interval_eq(output.content().unwrap(), Interval::new(lo=4.0, hi=9.0))
   }
   {
-    let input = Cell::default()
-    let output = Cell::default()
+    let input = @propagator.Cell::default()
+    let output = @propagator.Cell::default()
     squarer(input, output)
     input.write(Interval::new(lo=2.0, hi=10.0))
     output.write(Interval::new(lo=4.0, hi=9.0))
     assert_interval_eq(input.content().unwrap(), Interval::new(lo=2.0, hi=3.0))
   }
-  let input = Cell::default()
-  let output = Cell::default()
+  let input = @propagator.Cell::default()
+  let output = @propagator.Cell::default()
   squarer(input, output)
   input.write(Interval::new(lo=-10.0, hi=-2.0))
   output.write(Interval::new(lo=4.0, hi=9.0))
@@ -301,22 +307,22 @@ test "squarer propagates both ways" {
 ///|
 test "sqrter propagates both ways" {
   {
-    let input = Cell::default()
-    let output = Cell::default()
+    let input = @propagator.Cell::default()
+    let output = @propagator.Cell::default()
     sqrter(input, output)
     input.write(Interval::new(lo=4.0, hi=9.0))
     assert_interval_eq(output.content().unwrap(), Interval::new(lo=2.0, hi=3.0))
   }
   {
-    let input = Cell::default()
-    let output = Cell::default()
+    let input = @propagator.Cell::default()
+    let output = @propagator.Cell::default()
     sqrter(input, output)
     input.write(Interval::new(lo=0.0, hi=100.0))
     output.write(Interval::new(lo=2.0, hi=3.0))
     assert_interval_eq(input.content().unwrap(), Interval::new(lo=4.0, hi=9.0))
   }
-  let input = Cell::default()
-  let output = Cell::default()
+  let input = @propagator.Cell::default()
+  let output = @propagator.Cell::default()
   sqrter(input, output)
   output.write(Interval::new(lo=-3.0, hi=-2.0))
   assert_interval_eq(input.content().unwrap(), Empty)

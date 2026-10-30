@@ -46,9 +46,9 @@ pub(open) trait Propagated {
   fn merge(Self, Self) -> Change[Self]
 }
 pub impl Propagated for Bool
-pub impl Propagated for Int
+pub impl Propagated for Int32
 pub impl Propagated for Int64
-pub impl Propagated for UInt
+pub impl Propagated for UInt32
 pub impl Propagated for UInt64
 pub impl Propagated for Float
 pub impl Propagated for Double

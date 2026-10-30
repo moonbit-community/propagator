@@ -18,7 +18,7 @@ pub impl Propagated for Bool with fn merge(self, other) {
 }
 
 ///|
-pub impl Propagated for Int with fn merge(self, other) {
+pub impl Propagated for Int32 with fn merge(self, other) {
   merge_default(self, other)
 }
 
@@ -28,7 +28,7 @@ pub impl Propagated for Int64 with fn merge(self, other) {
 }
 
 ///|
-pub impl Propagated for UInt with fn merge(self, other) {
+pub impl Propagated for UInt32 with fn merge(self, other) {
   merge_default(self, other)
 }
 
