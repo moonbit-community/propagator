@@ -51,7 +51,9 @@ pub fn[T] Cell::write(self : Cell[T], val : T) -> Unit raise MergeError {
             raise MergeError(contradiction.err_msg)
           } else {
             raise MergeError(
-              "\{contradiction.err_msg}, supported by \{contradiction.support.iter().collect()}",
+              contradiction.err_msg +
+              ", supported by " +
+              Repr(contradiction.support.iter().collect()).to_string(),
             )
           }
       }
